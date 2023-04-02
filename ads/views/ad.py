@@ -1,20 +1,34 @@
-
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.viewsets import ModelViewSet
 
 from ads.models import Ad
+from ads.permissions import IsOwner, IsStaff
 from ads.serializers import *
 
 
 class AdViewSet(ModelViewSet):
     queryset = Ad.objects.order_by("-price")
     default_serializer_class = AdSerializer
+
+    default_permission = [AllowAny]
+    permissions = {
+        "retrieve": [IsAuthenticated],
+        "update": [IsAuthenticated, IsOwner | IsStaff],
+        "partial_update": [IsAuthenticated, IsOwner | IsStaff],
+        "destroy": [IsAuthenticated, IsOwner | IsStaff]
+    }
+
     serializers = {
         "list": AdListSerializer,
+        "create": AdListSerializer,
         "retrieve": AdDetailSerializer
     }
 
     def get_serializer_class(self):
         return self.serializers.get(self.action, self.default_serializer_class)
+
+    def get_permissions(self):
+        return [permission() for permission in self.permissions.get(self.action, self.default_permission)]
 
     def list(self, request, *args, **kwargs):
         categories = request.GET.getlist("cat")
