@@ -1,3 +1,4 @@
+from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.db import models
 from django.db.models import CASCADE
 
@@ -6,6 +7,7 @@ from users.models import User
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=10, unique=True, validators=[MinLengthValidator(5)])
 
     def __str__(self):
         return self.name
@@ -16,10 +18,10 @@ class Category(models.Model):
 
 
 class Ad(models.Model):
-    name = models.CharField(max_length=200)
+    name = models.CharField(validators=[MinLengthValidator(10)], null=False, blank=False, max_length=200)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    price = models.PositiveIntegerField(max_length=200)
-    description = models.TextField()
+    price = models.PositiveIntegerField()
+    description = models.TextField(null=True, blank=True)
     is_published = models.BooleanField(default=False)
     image = models.ImageField(null=True, blank=True, upload_to="ad_images")
     category = models.ForeignKey(Category, on_delete=models.CASCADE)

@@ -6,4 +6,3 @@ router = routers.SimpleRouter()
 router.register('', AdViewSet)
 
 urlpatterns = router.urls
-

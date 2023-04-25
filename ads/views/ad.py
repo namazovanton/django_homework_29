@@ -20,7 +20,7 @@ class AdViewSet(ModelViewSet):
 
     serializers = {
         "list": AdListSerializer,
-        "create": AdListSerializer,
+        "create": AdCreateSerializer,
         "retrieve": AdDetailSerializer
     }
 
